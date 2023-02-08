@@ -15,12 +15,12 @@
       </div>
       <div class="input-box">
         <label>密码</label>
-        <input type="password" v-model="pwd" @keyup.enter="userLogin()" />
+        <input type="password" v-model="pwd" @keyup.enter="loginAcc()" />
       </div>
       <div class="btn-box">
         <a href="#">忘记密码?</a>
         <div>
-          <button v-text="`登录`" @click="userLogin"></button>
+          <button v-text="`登录`" @click="loginAcc"></button>
           <button v-text="`注册`" @click="handleSignOrLogin(0)"></button>
         </div>
       </div>
@@ -30,7 +30,7 @@
       <h2>Sign</h2>
       <div class="input-box">
         <label>邮箱</label>
-        <input class="Signmail" type="text" v-model="email"  />
+        <input class="Signmail" type="text" v-model="email" />
       </div>
       <div class="input-box">
         <label>密码</label>
@@ -47,8 +47,10 @@
 </template>
 
 <script lang="ts" setup>
-import { log } from 'console';
-
+import { userLogin } from '@/request/module/login'
+import router from '@/router';
+import LocalCache from '@/utils/cache'
+import { debounce } from '@/utils/debounce'
 
 const userID = ref<string>('')
 const pwd = ref<string>('')
@@ -59,9 +61,19 @@ const Signpwd = ref<string>('')
 const loginBox = ref<HTMLElement>()
 const signBox = ref<HTMLElement>()
 
+const handleLogin = async () => {
+  const res = await userLogin(userID.value, pwd.value)
+  if (!!res.token) {
+    LocalCache.setCache('token', res.token)
+    router.push('/main')
+  } else {
+    console.error('登陆失败');
 
+  }
 
-const userLogin = () => { }
+}
+
+const loginAcc = debounce(handleLogin,500)
 const handleSignOrLogin = (flag: number) => {
   console.log(flag);
 
