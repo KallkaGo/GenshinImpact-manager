@@ -6,7 +6,8 @@
  * @Description: 
 -->
 <template>
-  <div class="login_container">
+
+  <div class="login_container" v-loading="show" element-loading-background="rgba(255,255,255,0.5)">
     <div class="box" ref="loginBox">
       <h2>Login</h2>
       <div class="input-box">
@@ -44,6 +45,11 @@
       </div>
     </div>
   </div>
+
+
+
+
+
 </template>
 
 <script lang="ts" setup>
@@ -51,6 +57,9 @@ import { userLogin } from '@/request/module/login'
 import router from '@/router';
 import LocalCache from '@/utils/cache'
 import { debounce } from '@/utils/debounce'
+
+
+const show = ref<boolean>(false)
 
 const userID = ref<string>('')
 const pwd = ref<string>('')
@@ -62,20 +71,35 @@ const loginBox = ref<HTMLElement>()
 const signBox = ref<HTMLElement>()
 
 const handleLogin = async () => {
-  const res = await userLogin(userID.value, pwd.value)
-  if (!!res.token) {
-    LocalCache.setCache('token', res.token)
-    router.push('/main')
+  if (userID.value !== '' && pwd.value !== '') {
+    show.value = !show.value
+    const res = await userLogin(userID.value, pwd.value)
+    if (!!res.token) {
+      LocalCache.setCache('token', res.token)
+      ElMessage({
+        type: 'success',
+        message: '登陆成功'
+      })
+      router.push('/main')
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '用户名或密码不正确'
+      })
+    }
+    show.value = !show.value
   } else {
-    console.error('登陆失败');
-
+    ElMessage({
+      type: 'warning',
+      message: "用户名或密码不能为空"
+    })
   }
+
 
 }
 
-const loginAcc = debounce(handleLogin,500)
+const loginAcc = debounce(handleLogin, 500)
 const handleSignOrLogin = (flag: number) => {
-  console.log(flag);
 
   let loginDom = loginBox.value
   let signDom = signBox.value
