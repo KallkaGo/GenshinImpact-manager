@@ -6,9 +6,9 @@
  * @Description: 
 -->
 <template>
-
   <div class="login_container" v-loading="show" element-loading-background="rgba(255,255,255,0.5)">
-    <div class="box" ref="loginBox">
+    <div class="PanelBox"> 
+      <div class="box" ref="loginBox">
       <h2>Login</h2>
       <div class="input-box">
         <label>账号</label>
@@ -35,29 +35,26 @@
       </div>
       <div class="input-box">
         <label>密码</label>
-        <input type="password" v-model="Signpwd" @keyup.enter="userRegister()" />
+        <input type="password" v-model="Signpwd" @keyup.enter="signAcc()" />
       </div>
       <div class="btn-box">
         <div>
-          <button v-text="`注册`" @click="userRegister"></button>
+          <button v-text="`注册`" @click="signAcc"></button>
           <button v-text="`已有账号直接登陆`" @click="handleSignOrLogin(1)"></button>
         </div>
       </div>
     </div>
+    </div>
+   
   </div>
-
-
-
-
-
 </template>
 
 <script lang="ts" setup>
-import { userLogin } from '@/request/module/login'
+import { userLogin, userSign } from '@/request/module/login'
 import router from '@/router';
 import LocalCache from '@/utils/cache'
 import { debounce } from '@/utils/debounce'
-
+import { RSAEncrypt } from '@/utils/rsa'
 
 const show = ref<boolean>(false)
 
@@ -70,12 +67,16 @@ const Signpwd = ref<string>('')
 const loginBox = ref<HTMLElement>()
 const signBox = ref<HTMLElement>()
 
+
+/* 登陆逻辑 */
 const handleLogin = async () => {
+
+
   if (userID.value !== '' && pwd.value !== '') {
     show.value = !show.value
-    const res = await userLogin(userID.value, pwd.value)
-    if (!!res.token) {
-      LocalCache.setCache('token', res.token)
+    const res = await userLogin(userID.value, <string>RSAEncrypt(pwd.value))
+    if (!!res.data) {
+      LocalCache.setCache('token', res.data)
       ElMessage({
         type: 'success',
         message: '登陆成功'
@@ -98,21 +99,43 @@ const handleLogin = async () => {
 
 }
 
+/* 
+注册逻辑
+*/
+const handleSign = async () => {
+  if (email.value !== '' && Signpwd.value !== '') {
+    show.value = !show.value
+    const res = await userSign(email.value, <string>RSAEncrypt(Signpwd.value))
+    ElMessage({
+      type: 'success',
+      message: res.data
+    })
+    show.value = !show.value
+  } else {
+    ElMessage({
+      type: 'warning',
+      message: "邮箱或密码不能为空"
+    })
+  }
+}
 const loginAcc = debounce(handleLogin, 500)
-const handleSignOrLogin = (flag: number) => {
+const signAcc = debounce(handleSign, 500)
 
+
+
+const handleSignOrLogin = (flag: number) => {
   let loginDom = loginBox.value
   let signDom = signBox.value
   if (flag === 0) {
-    loginDom!.style.transform = "rotateY(180deg)"
-    signDom!.style.transform = 'rotateY(0deg)'
+    loginDom!.style.transform = "rotateY(180deg) "
+    signDom!.style.transform = 'rotateY(0deg) '
   } else {
-    loginDom!.style.transform = "rotateY(0deg)"
-    signDom!.style.transform = 'rotateY(-180deg)'
+    loginDom!.style.transform = "rotateY(0deg) "
+    signDom!.style.transform = 'rotateY(180deg)'
   }
 
 }
-const userRegister = () => { }
+
 
 
 
@@ -127,12 +150,18 @@ const userRegister = () => { }
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: translate3d(0, 0, 0);
 }
-
+.PanelBox{
+  width: 350px;
+  height: 350px;
+  backdrop-filter: blur(2px);
+}
 .box {
   position: absolute;
   backface-visibility: hidden;
-  transition: all .5s;
+  transition: transform ease .4s;
+  transform-origin: center;
   width: 350px;
   height: 350px;
   display: flex;
@@ -145,7 +174,7 @@ const userRegister = () => { }
   border-left: 1px solid rgba(255, 255, 255, 0.5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   border-right: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(2px);
+  
 }
 
 .box>h2 {
@@ -219,7 +248,7 @@ const userRegister = () => { }
   display: block;
   font-size: 14px;
   border-radius: 5px;
-  transition: 0.2s;
+  transition: .2s;
 }
 
 .box .btn-box>div>button:nth-of-type(1) {
@@ -248,14 +277,14 @@ const userRegister = () => { }
   position: absolute;
   backface-visibility: hidden;
   transform: rotateY(-180deg);
-  transition: all .5s;
+  transform-origin: center;
+  transition: transform ease .4s;
   width: 350px;
   height: 350px;
   border-top: 1px solid rgba(255, 255, 255, 0.5);
   border-left: 1px solid rgba(255, 255, 255, 0.5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   border-right: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(2px);
   background: rgba(50, 50, 50, 0.2);
   display: flex;
   flex-direction: column;
@@ -294,7 +323,7 @@ const userRegister = () => { }
   outline: none;
   padding: 0 12px;
   color: rgba(255, 255, 255, 0.9);
-  transition: 0.2s;
+  transition: .2s;
 }
 
 .Signbox .input-box input:focus {
@@ -335,7 +364,7 @@ const userRegister = () => { }
   display: block;
   font-size: 14px;
   border-radius: 5px;
-  transition: 0.2s;
+  transition: .2s;
 }
 
 .Signbox .btn-box>div>button:nth-of-type(1) {
