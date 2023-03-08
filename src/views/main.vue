@@ -7,12 +7,58 @@
 -->
 <template>
   <div class="container">
-    <h1>Main</h1>
+    <el-container class="main-container">
+      <el-aside :width="isCollapse ? '100px' : '250px'">
+        <Menu :isFold="isCollapse"></Menu>
+      </el-aside>
+      <el-container class="main-page">
+        <el-header>
+          <Header @fold-change="handleFoldcallback"></Header>
+        </el-header>
+        <el-main class="main">Main</el-main>
+      </el-container>
+    </el-container>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue"
+import Menu from '@/components/Menu'
+import Header from '@/components/Header'
+import { useMainStore } from '@/store/main'
+
+const store = useMainStore()
+
+
+const isCollapse = ref(false)
+
+const handleFoldcallback = (isFold: boolean) => {
+  isCollapse.value = isFold
+  store.changeisFold(isCollapse.value)
+}
+
+
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.el-aside {
+  transition: width 0.3s linear;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.container {
+  height: 100%;
+}
+
+.main-container {
+  height: 100%;
+}
+
+.main-page {
+  height: 100%;
+}
+
+.main {
+  background-color: #f5f8fa;
+}
+</style>
