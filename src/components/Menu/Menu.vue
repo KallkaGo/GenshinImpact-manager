@@ -5,17 +5,17 @@
       <span v-if="!isFold" class="title">派蒙走好运</span>
     </div>
     <el-menu class="el-menu-vertical-demo" background-color="#2d2d43" text-color="#b6b9c8" :collapse="isFold">
-      <template v-for="(item, index) in menuList?.records">
+      <template v-for="(item, index) in menuList?.records"  :key="index" >
         <el-sub-menu v-if="item.child" :index="String(item.id)">
           <template #title>
             <span>{{ item.menuName }}</span>
           </template>
-          <template v-for="(subitem, index) in item.child ">
+          <template v-for="(subitem, index2) in item.child "  :key="index2" >
             <el-menu-item :index="String(subitem.id)" @click="handleClick(subitem)">{{ subitem.menuName }}</el-menu-item>
           </template>
         </el-sub-menu>
 
-        <el-menu-item v-else :index="String(item.id)" @click="handleClick(item)">
+        <el-menu-item v-else :index="String(item.id)" @click="handleClick(item)" >
           <span>{{ item.menuName }}</span>
         </el-menu-item>
       </template>
@@ -34,6 +34,9 @@ type Props = {
 }
 
 const store = useMainStore()
+
+
+
 const router = useRouter()
 
 withDefaults(defineProps<Props>(), {

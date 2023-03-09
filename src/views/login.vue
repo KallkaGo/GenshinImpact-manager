@@ -60,6 +60,8 @@ import { RSAEncrypt } from '@/utils/rsa'
 
 
 const store =useLoginStore()
+console.log('store',store);
+
 
 const show = ref<boolean>(false)
 

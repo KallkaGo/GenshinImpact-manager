@@ -43,13 +43,14 @@ import LocalCache from '@/utils/cache'
 import { useMainStore } from '@/store/main';
 
 const store = useMainStore()
-
+console.log('main',store);
 
 const img = ref()
 
 const handleExit = () => {
   LocalCache.deleteCache('token')
-  router.back()
+  LocalCache.deleteCache('menuBreadList')
+  router.push('/login')
 }
 
 const isFold = ref(false)
@@ -62,10 +63,10 @@ const handleFold = () => {
 
 
 const breadList = computed(() => {
-  if (store.curMenuList.length>0) {
-    return store.curMenuList
-  }
-  return LocalCache.getCache('menuBreadList')
+
+  return store.curMenuList === undefined ? store.curMenuList : LocalCache.getCache('menuBreadList')
+
+
 })
 
 </script>
