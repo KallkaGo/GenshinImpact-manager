@@ -2,20 +2,20 @@
   <div class="menu">
     <div class="logo">
       <img class="img" src="@/assets/paimeng.png" alt="logo" />
-      <span  v-if="!isFold"  class="title">派蒙走好运</span>
+      <span v-if="!isFold" class="title">派蒙走好运</span>
     </div>
-    <el-menu class="el-menu-vertical-demo" background-color="#2d2d43" text-color="#b6b9c8"   :collapse="isFold"  >
+    <el-menu class="el-menu-vertical-demo" background-color="#2d2d43" text-color="#b6b9c8" :collapse="isFold">
       <template v-for="(item, index) in menuList?.records">
         <el-sub-menu v-if="item.child" :index="String(item.id)">
           <template #title>
             <span>{{ item.menuName }}</span>
           </template>
           <template v-for="(subitem, index) in item.child ">
-            <el-menu-item :index="String(subitem.id)">{{ subitem.menuName }}</el-menu-item>
+            <el-menu-item :index="String(subitem.id)" @click="handleClick(subitem)">{{ subitem.menuName }}</el-menu-item>
           </template>
         </el-sub-menu>
 
-        <el-menu-item v-else :index="String(item.id)">
+        <el-menu-item v-else :index="String(item.id)" @click="handleClick(item)">
           <span>{{ item.menuName }}</span>
         </el-menu-item>
       </template>
@@ -25,12 +25,18 @@
 
 <script setup lang="ts">
 import { queryMenuList } from '@/request/module/main';
-
+import { useMainStore } from '@/store/main'
+import { useRouter } from 'vue-router';
+import  {pathMapBreadcrumb} from '@/utils/menuPath'
+import LocalCache from '@/utils/cache'
 type Props = {
   isFold: boolean
 }
 
-withDefaults(defineProps<Props>(),{
+const store = useMainStore()
+const router = useRouter()
+
+withDefaults(defineProps<Props>(), {
   isFold: false
 })
 
@@ -39,7 +45,15 @@ const menuList = ref()
 const getMenuList = async () => {
   const res = await queryMenuList()
   menuList.value = res.data
+}
 
+
+const handleClick = (Menuitem: any) => {
+  console.log('@@@@', Menuitem)
+  const menuBreadList = pathMapBreadcrumb(menuList.value.records,Menuitem)
+  store.changecurMenu(menuBreadList)
+  LocalCache.setCache('menuBreadList',menuBreadList)
+  router.push({name: Menuitem.component ?? 'not-found'})
 
 }
 
@@ -72,7 +86,6 @@ onMounted(() => {
     font-weight: 600;
     font-family: 'ZCOOL KuaiLe', sans-serif;
     user-select: none;
-    -webkit-user-drag: none;
     transition: all 0.3s linear;
     white-space: nowrap;
   }
