@@ -9,21 +9,23 @@
   <div class="container">
     <el-container class="main-container">
       <el-aside :width="isCollapse ? '100px' : '250px'">
-        <Menu :isFold="isCollapse"></Menu>
+        <pageMenu :isFold="isCollapse"></pageMenu>
       </el-aside>
       <el-container class="main-page">
         <el-header>
-          <Header @fold-change="handleFoldcallback"></Header>
+          <pageHeader @fold-change="handleFoldcallback"></pageHeader>
         </el-header>
-        <el-main class="main">Main</el-main>
+        <el-main class="main">
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
 </template>
 
 <script lang="ts" setup>
-import Menu from '@/components/Menu'
-import Header from '@/components/Header'
+import pageMenu from '@/components/Menu'
+import pageHeader from '@/components/Header'
 import { useMainStore } from '@/store/main'
 
 const store = useMainStore()

@@ -10,10 +10,9 @@
     </div>
     <div class="content">
       <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+        <template v-for="(item, index) in breadList" :key="index">
+          <el-breadcrumb-item>{{ item.menuName }}</el-breadcrumb-item>
+        </template>
       </el-breadcrumb>
       <div>
         <el-dropdown>
@@ -41,6 +40,9 @@
 import { ArrowRight } from '@element-plus/icons-vue'
 import router from '@/router';
 import LocalCache from '@/utils/cache'
+import { useMainStore } from '@/store/main';
+
+const store = useMainStore()
 
 
 const img = ref()
@@ -51,22 +53,31 @@ const handleExit = () => {
 }
 
 const isFold = ref(false)
-const emit= defineEmits(['foldChange'])
+const emit = defineEmits(['foldChange'])
 
 const handleFold = () => {
   isFold.value = !isFold.value
-  emit('foldChange',isFold.value)
+  emit('foldChange', isFold.value)
 }
+
+
+const breadList = computed(() => {
+  if (store.curMenuList.length) {
+    return store.curMenuList
+  }
+ return LocalCache.getCache('menuBreadList')
+})
 
 </script>
 
 <style lang="scss" scoped>
-.container-icon{
+.container-icon {
   display: inline-flex;
   align-items: center;
   margin-right: 10px;
   cursor: pointer;
 }
+
 .header-container {
   display: flex;
   height: 100%;
