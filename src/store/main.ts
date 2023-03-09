@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 export const useMainStore = defineStore('login', {
     state: () => {
         return {
-           
             isFold:false,
             curMenuList:[] as any[]
         }

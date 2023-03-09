@@ -114,7 +114,7 @@ const handleSign = async () => {
     const res = await userSign(email.value, <string>RSAEncrypt(Signpwd.value))
     ElMessage({
       type: 'success',
-      message: res.data
+      message: '请前往邮箱验证'
     })
     show.value = !show.value
   } else {

@@ -49,7 +49,7 @@ const getMenuList = async () => {
 
 
 const handleClick = (Menuitem: any) => {
-  console.log('@@@@', Menuitem)
+  console.log('@@@@', menuList.value.records)
   const menuBreadList = pathMapBreadcrumb(menuList.value.records,Menuitem)
   store.changecurMenu(menuBreadList)
   LocalCache.setCache('menuBreadList',menuBreadList)

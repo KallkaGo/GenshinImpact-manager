@@ -62,10 +62,10 @@ const handleFold = () => {
 
 
 const breadList = computed(() => {
-  if (store.curMenuList.length) {
+  if (store.curMenuList.length>0) {
     return store.curMenuList
   }
- return LocalCache.getCache('menuBreadList')
+  return LocalCache.getCache('menuBreadList')
 })
 
 </script>
