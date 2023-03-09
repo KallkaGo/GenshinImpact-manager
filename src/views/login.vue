@@ -50,17 +50,11 @@
 </template>
 
 <script lang="ts" setup>
-import  {useLoginStore} from '@/store/login'
 import { userLogin, userSign } from '@/request/module/login'
 import router from '@/router';
 import LocalCache from '@/utils/cache'
 import { debounce } from '@/utils/debounce'
 import { RSAEncrypt } from '@/utils/rsa'
-
-
-
-const store =useLoginStore()
-console.log('store',store);
 
 
 const show = ref<boolean>(false)
@@ -84,7 +78,6 @@ const handleLogin = async () => {
     const res = await userLogin(userID.value, <string>RSAEncrypt(pwd.value))
     if (!!res.data) {
       LocalCache.setCache('token', res.data)
-      store.changeUserInfo({userAcc:userID.value,pwd:pwd.value})
       ElMessage({
         type: 'success',
         message: '登陆成功'

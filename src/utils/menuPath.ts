@@ -23,7 +23,6 @@ export default function menuPath(currentMenu: any, MenuList: Array<any>, breadcr
 export function pathMapBreadcrumb(userMenus: any[], currentPath: object) {
   const breadcrumb: Array<any> = []
   menuPath(currentPath, userMenus, breadcrumb)
-  console.log('最终输出', breadcrumb);
   return breadcrumb
 
 }

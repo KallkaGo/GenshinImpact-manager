@@ -20,7 +20,16 @@ const userSign = (email: string, pwd: string) => {
   });
 };
 
+
+const queryUserInfo =()=>{
+  return Request.post({
+    url:'/user/info',
+  })
+}
+
+
 export {
     userLogin,
-    userSign
+    userSign,
+    queryUserInfo
 };

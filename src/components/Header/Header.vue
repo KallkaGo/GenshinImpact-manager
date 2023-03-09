@@ -18,7 +18,7 @@
         <el-dropdown>
           <span class="el-dropdown-link">
             <el-avatar :size="40" :src="img" />
-            <span class="username">kallka</span>
+            <span class="username">{{ userInfo.roleName }}</span>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
@@ -41,9 +41,10 @@ import { ArrowRight } from '@element-plus/icons-vue'
 import router from '@/router';
 import LocalCache from '@/utils/cache'
 import { useMainStore } from '@/store/main';
+import { useLoginStore } from '@/store/login';
 
-const store = useMainStore()
-console.log('main',store);
+const Mainstore = useMainStore()
+const LoginStore = useLoginStore()
 
 const img = ref()
 
@@ -63,10 +64,11 @@ const handleFold = () => {
 
 
 const breadList = computed(() => {
+  return Mainstore.curMenuList === undefined ? Mainstore.curMenuList : LocalCache.getCache('menuBreadList')
+})
 
-  return store.curMenuList === undefined ? store.curMenuList : LocalCache.getCache('menuBreadList')
-
-
+const userInfo =computed(()=>{
+    return LoginStore.userinfo
 })
 
 </script>

@@ -5,17 +5,16 @@
       <span v-if="!isFold" class="title">派蒙走好运</span>
     </div>
     <el-menu class="el-menu-vertical-demo" background-color="#2d2d43" text-color="#b6b9c8" :collapse="isFold">
-      <template v-for="(item, index) in menuList?.records"  :key="index" >
-        <el-sub-menu v-if="item.child" :index="String(item.id)">
+      <template v-for="(item, index) in menuList" :key="index">
+        <el-sub-menu v-if="item.child.length > 0" :index="String(item.id)">
           <template #title>
             <span>{{ item.menuName }}</span>
           </template>
-          <template v-for="(subitem, index2) in item.child "  :key="index2" >
+          <template v-for="(subitem, index2) in item.child " :key="index2">
             <el-menu-item :index="String(subitem.id)" @click="handleClick(subitem)">{{ subitem.menuName }}</el-menu-item>
           </template>
         </el-sub-menu>
-
-        <el-menu-item v-else :index="String(item.id)" @click="handleClick(item)" >
+        <el-menu-item v-else :index="String(item.id)" @click="handleClick(item)">
           <span>{{ item.menuName }}</span>
         </el-menu-item>
       </template>
@@ -24,17 +23,19 @@
 </template>
 
 <script setup lang="ts">
-import { queryMenuList } from '@/request/module/main';
+import { queryUserInfo } from '@/request/module/login'
 import { useMainStore } from '@/store/main'
+import {useLoginStore} from '@/store/login'
 import { useRouter } from 'vue-router';
-import  {pathMapBreadcrumb} from '@/utils/menuPath'
+import generateTree from '@/utils/generateTree'
+import { pathMapBreadcrumb } from '@/utils/menuPath'
 import LocalCache from '@/utils/cache'
 type Props = {
   isFold: boolean
 }
 
-const store = useMainStore()
-
+const Mainstore = useMainStore()
+const Loginstore= useLoginStore()
 
 
 const router = useRouter()
@@ -46,18 +47,25 @@ withDefaults(defineProps<Props>(), {
 const menuList = ref()
 
 const getMenuList = async () => {
-  const res = await queryMenuList()
-  menuList.value = res.data
+  try {
+    const result = await queryUserInfo()
+    if (result.data) {
+      Loginstore.changeUserInfo(result.data.roles[0])
+      const menuData = generateTree(result.data.menus)
+      console.log(menuData);
+      menuList.value = menuData
+    }
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 
 const handleClick = (Menuitem: any) => {
-  console.log('@@@@', menuList.value.records)
-  const menuBreadList = pathMapBreadcrumb(menuList.value.records,Menuitem)
-  store.changecurMenu(menuBreadList)
+  const menuBreadList = pathMapBreadcrumb(menuList.value,Menuitem)
+  Mainstore.changecurMenu(menuBreadList)
   LocalCache.setCache('menuBreadList',menuBreadList)
   router.push({name: Menuitem.component ?? 'not-found'})
-
 }
 
 onMounted(() => {
