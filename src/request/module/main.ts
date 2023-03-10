@@ -11,6 +11,26 @@ const queryMenuList = (cur=1,size=10) => {
   })
 }
 
+
+const addMenuList =(payload:any)=>{
+  return Request.post({
+    url:'/menu/add',
+    data:payload
+  })
+}
+
+const queryMenuListById=(param:number)=>{
+  return Request.post({
+    url:'/menu/find',
+    data:{
+      id:param
+    }
+  })
+}
+
+
 export {
-  queryMenuList
+  queryMenuList,
+  addMenuList,
+  queryMenuListById
 }

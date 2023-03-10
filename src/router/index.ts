@@ -12,6 +12,7 @@ const Main = () => import('@/views/main.vue')
 const Role = () => import('@/views/page/role.vue')
 const User = () => import('@/views/page/user.vue')
 const Notfound = () => import('@/views/not-found/404.vue')
+const Menu = () => import('@/views/page/menu.vue')
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
@@ -36,15 +37,19 @@ const routes: Array<RouteRecordRaw> = [
                 path: "/user",
                 name: '234',
                 component: User
+            },
+            {
+                path: '/menu',
+                name: 'menu',
+                component:Menu
             }
         ]
 
     },
     {
-        path:'/:pathMatch(.*)*',
-        name:'not-found',
-        component:Notfound
-      }
+        path: '/:pathMatch(.*)*',
+        component: Notfound
+    }
 
 ]
 

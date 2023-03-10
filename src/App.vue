@@ -12,4 +12,7 @@
 .app{
   height: 100%;
 }
+::-webkit-scrollbar {
+    width: 0;
+  }
 </style>

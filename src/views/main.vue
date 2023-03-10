@@ -62,5 +62,6 @@ const handleFoldcallback = (isFold: boolean) => {
 
 .main {
   background-color: #f5f8fa;
+  padding: 15px;
 }
 </style>

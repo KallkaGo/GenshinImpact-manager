@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { Z_UNKNOWN } from 'zlib'
 
 type Iuserinfo ={
     id:number,
