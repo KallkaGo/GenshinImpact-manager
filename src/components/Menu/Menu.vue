@@ -7,21 +7,6 @@
     <el-menu class="el-menu-vertical-demo" background-color="#2d2d43" text-color="#b6b9c8" :collapse="isFold">
       <CmMenu :isFold="isFold" :menuList="menuList" />
     </el-menu>
-    <!-- <el-menu class="el-menu-vertical-demo" background-color="#2d2d43" text-color="#b6b9c8" :collapse="isFold">
-      <template v-for="(item, index) in menuList" :key="index">
-        <el-sub-menu v-if="item.child" :index="String(item.id)">
-          <template #title>
-            <span>{{ item.menuName }}</span>
-          </template>
-          <template v-for="(subitem, index2) in item.child " :key="index2">
-            <el-menu-item :index="String(subitem.id)" @click="handleClick(subitem)">{{ subitem.menuName }}</el-menu-item>
-          </template>
-        </el-sub-menu>
-        <el-menu-item v-else :index="String(item.id)" @click="handleClick(item)">
-          <span>{{ item.menuName }}</span>
-        </el-menu-item>
-      </template>
-    </el-menu> -->
   </div>
 </template>
 
@@ -30,9 +15,6 @@ import CmMenu from './CmMenu.vue'
 import { queryUserInfo } from '@/request/module/login'
 import { useMainStore } from '@/store/main'
 import { useLoginStore } from '@/store/login'
-import { useRouter } from 'vue-router';
-import { pathMapBreadcrumb } from '@/utils/menuPath'
-import LocalCache from '@/utils/cache'
 type Props = {
   isFold: boolean
 }
