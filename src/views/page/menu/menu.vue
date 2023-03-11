@@ -108,9 +108,13 @@ const queryMenuListData = async () => {
 }
 
 const handleCancel = (payload: any) => {
-  if (!payload) showDialog.value = !showDialog.value
-  queryMenuListData()
-  showDialog.value = !showDialog.value
+  if (!payload) {
+    showDialog.value = !showDialog.value
+  } else {
+    queryMenuListData()
+    showDialog.value = !showDialog.value
+  }
+
 }
 
 const handleEdit = (row: any, index: number) => {

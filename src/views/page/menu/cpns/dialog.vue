@@ -136,7 +136,6 @@ const hanldeConfirm = async (flag: number) => {
   await formRef.value.validate(async (valid: boolean) => {
     try {
       if (valid) {
-
         if (flag) {
           const params = { ...formData.value }
           const res = await addMenu(params)
@@ -176,13 +175,10 @@ const hanldeCancel = () => {
 
 const handleOnpen = () => {
   formRef.value!.resetFields()
-  let keys = Object.keys(formData.value)
-  for (const key of keys) {
-    if (props.title === 'EDIT') {
-      formData.value[key] = props.rowData[key]
-    } else {
-      formData.value[key] = ''
-    }
+  if (props.title === 'EDIT') {
+    formData.value = { ...props.rowData }
+  } else {
+    formData.value = {}
   }
 }
 
