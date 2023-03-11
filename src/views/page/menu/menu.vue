@@ -18,27 +18,29 @@
       <el-table-column align="center" prop="routerPath" label="路由地址" />
       <el-table-column align="center" prop="remark" label="备注" />
       <el-table-column align="center" label="操作" width="150px">
-        <template #default>
+        <template #default="scope">
           <div class="btngroup">
-            <el-button type="primary" size="small">编辑</el-button>
-            <el-button type="danger" size="small">删除</el-button>
+            <el-button type="primary" size="small" @click="handleEdit(scope.row, scope.$index)">编辑</el-button>
+            <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
           </div>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination class="pagination" background layout="->,prev, pager, next" :total="1" />
   </div>
-  <Dialog :title="dialogType" :dialogVisible="showDialog"  @cancelDialog="handleCancel" ></Dialog>
+  <Dialog :title="dialogType" :dialogVisible="showDialog" @cancelDialog="handleCancel" :row-data="rowData"></Dialog>
 </template>
 
 <script setup lang="ts">
-import { queryMenuList, queryMenuListById } from '@/request/module/main'
+import { queryMenuList, queryMenuListById, deleteMenu } from '@/request/module/main'
 import generateTree from '@/utils/generateTree'
 import Dialog from './cpns/dialog.vue'
 
 const form = ref<any>({
   name: ''
 })
+
+const rowData = ref({})
 
 
 const dialogType = ref('')
@@ -52,7 +54,7 @@ const maxheight = ref()
 const handleSearch = async () => {
   const res = await queryMenuListById(form.value.name)
   if (res.data) {
-    const searcResult = [{...res.data}]
+    const searcResult = [{ ...res.data }]
     console.log(searcResult);
     tableData.value = searcResult
   }
@@ -62,6 +64,31 @@ const handleAdd = () => {
   dialogType.value = 'ADD'
   showDialog.value = !showDialog.value
 }
+
+
+const handleDelete = (row: any) => {
+  ElMessageBox.confirm(
+    '确认删除该项吗',
+    '警告',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(async () => {
+      console.log(row.id)
+      const res = await deleteMenu(row.id)
+      if (res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '删除成功'
+        })
+        queryMenuListData()
+      }
+    })
+}
+
 
 const CalcTableHeight = () => {
   let viewHeight = window.innerHeight
@@ -80,9 +107,19 @@ const queryMenuListData = async () => {
   }
 }
 
-const handleCancel =(payload:any)=>{
-  if(!payload) showDialog.value = !showDialog.value
+const handleCancel = (payload: any) => {
+  if (!payload) showDialog.value = !showDialog.value
+  queryMenuListData()
+  showDialog.value = !showDialog.value
 }
+
+const handleEdit = (row: any, index: number) => {
+  dialogType.value = 'EDIT'
+  rowData.value = row
+  showDialog.value = !showDialog.value
+
+}
+
 
 
 onMounted(() => {

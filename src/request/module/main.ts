@@ -28,9 +28,35 @@ const queryMenuListById=(param:number)=>{
   })
 }
 
+const addMenu =(param:any)=>{
+  return Request.post({
+    url:'/menu/add',
+    data:param
+  })
+}
+
+const deleteMenu =(param:number)=>{
+  return Request.post({
+    url:'/menu/delete',
+    params:{
+      id:param
+    }
+  })
+}
+
+const updateMenu =(params:any)=>{
+return Request.post({
+  url:'/menu/update',
+  data:params
+})
+}
+
 
 export {
   queryMenuList,
   addMenuList,
-  queryMenuListById
+  queryMenuListById,
+  addMenu,
+  deleteMenu,
+  updateMenu
 }
