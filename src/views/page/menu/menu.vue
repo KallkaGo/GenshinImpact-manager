@@ -11,14 +11,8 @@
         </el-form-item>
       </el-row>
     </el-form>
-    <el-table 
-    :data="tableData" 
-    style="width: 100%" 
-    border 
-    highlight-current-row 
-    :height="maxheight" row-key="id"  
-    :tree-props="{ children: 'child', hasChildren: 'hasChildren' }" 
-    >
+    <el-table :data="tableData" style="width: 100%" border highlight-current-row :height="maxheight" row-key="id"
+      :tree-props="{ children: 'child', hasChildren: 'hasChildren' }">
       <el-table-column align="center" prop="id" label="ID" />
       <el-table-column align="center" prop="menuName" label="菜单名字" w />
       <el-table-column align="center" prop="routerPath" label="路由地址" />
@@ -34,24 +28,39 @@
     </el-table>
     <el-pagination class="pagination" background layout="->,prev, pager, next" :total="1" />
   </div>
+  <Dialog :title="dialogType" :dialogVisible="showDialog"  @cancelDialog="handleCancel" ></Dialog>
 </template>
 
 <script setup lang="ts">
-import { queryMenuList } from '@/request/module/main'
+import { queryMenuList, queryMenuListById } from '@/request/module/main'
 import generateTree from '@/utils/generateTree'
+import Dialog from './cpns/dialog.vue'
 
-const form = ref<any>({})
+const form = ref<any>({
+  name: ''
+})
+
+
+const dialogType = ref('')
+
+const showDialog = ref(false)
 
 const tableData = ref<Array<any>>([])
 
 const maxheight = ref()
 
-const handleSearch = () => {
-
+const handleSearch = async () => {
+  const res = await queryMenuListById(form.value.name)
+  if (res.data) {
+    const searcResult = [{...res.data}]
+    console.log(searcResult);
+    tableData.value = searcResult
+  }
 }
 
 const handleAdd = () => {
-
+  dialogType.value = 'ADD'
+  showDialog.value = !showDialog.value
 }
 
 const CalcTableHeight = () => {
@@ -67,9 +76,12 @@ const queryMenuListData = async () => {
   const res = await queryMenuList()
   if (res.data) {
     const menuList = generateTree(res.data.records)
-    console.log(menuList);
     tableData.value = menuList
   }
+}
+
+const handleCancel =(payload:any)=>{
+  if(!payload) showDialog.value = !showDialog.value
 }
 
 

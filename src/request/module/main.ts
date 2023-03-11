@@ -22,7 +22,7 @@ const addMenuList =(payload:any)=>{
 const queryMenuListById=(param:number)=>{
   return Request.post({
     url:'/menu/find',
-    data:{
+    params:{
       id:param
     }
   })

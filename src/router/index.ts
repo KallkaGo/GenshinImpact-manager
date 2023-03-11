@@ -12,7 +12,7 @@ const Main = () => import('@/views/main.vue')
 const Role = () => import('@/views/page/role.vue')
 const User = () => import('@/views/page/user.vue')
 const Notfound = () => import('@/views/not-found/404.vue')
-const Menu = () => import('@/views/page/menu.vue')
+const Menu = () => import('@/views/page/menu/menu.vue')
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
