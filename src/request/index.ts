@@ -10,34 +10,34 @@ class MyHttp {
       baseURL: BASE_URL,
       timeout: TIME_OUT,
     });
-    this.instance.interceptors.request.use((config)=>{
+    this.instance.interceptors.request.use((config) => {
       const token = LocalCache.getCache('token')
-      if(token){
+      if (token) {
         config.headers.Authorization = token
       }
       return config
-    },(err)=>{
+    }, (err) => {
       return err
-     })
+    })
     this.instance.interceptors.response.use(
       (res) => {
         return res.data;
       },
       (err) => {
-        return err;
+        return Promise.reject(err);
       }
     );
   }
 
-  request(config: AxiosRequestConfig):Promise<any> {
+  request(config: AxiosRequestConfig): Promise<any> {
     return this.instance.request(config);
   }
 
-  get(config: AxiosRequestConfig):Promise<any> {
+  get(config: AxiosRequestConfig): Promise<any> {
     return this.instance.request({ ...config, method: "GET" });
   }
 
-  post(config: AxiosRequestConfig):Promise<any> {
+  post(config: AxiosRequestConfig): Promise<any> {
     return this.instance.request({ ...config, method: "POST" });
   }
 }

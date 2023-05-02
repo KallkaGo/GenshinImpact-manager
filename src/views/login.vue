@@ -7,45 +7,45 @@
 -->
 <template>
   <div class="login_container" v-loading="show" element-loading-background="rgba(255,255,255,0.5)">
-    <div class="PanelBox"> 
+    <div class="PanelBox">
       <div class="box" ref="loginBox">
-      <h2>Login</h2>
-      <div class="input-box">
-        <label>账号</label>
-        <input type="text" v-model="userID" />
+        <h2>Login</h2>
+        <div class="input-box">
+          <label>账号</label>
+          <input type="text" v-model="userID" />
+        </div>
+        <div class="input-box">
+          <label>密码</label>
+          <input type="password" v-model="pwd" @keyup.enter="loginAcc()" />
+        </div>
+        <div class="btn-box">
+          <a href="#">忘记密码?</a>
+          <div>
+            <button v-text="`登录`" @click="loginAcc"></button>
+            <button v-text="`注册`" @click="handleSignOrLogin(0)"></button>
+          </div>
+        </div>
       </div>
-      <div class="input-box">
-        <label>密码</label>
-        <input type="password" v-model="pwd" @keyup.enter="loginAcc()" />
-      </div>
-      <div class="btn-box">
-        <a href="#">忘记密码?</a>
-        <div>
-          <button v-text="`登录`" @click="loginAcc"></button>
-          <button v-text="`注册`" @click="handleSignOrLogin(0)"></button>
+
+      <div class="Signbox" ref="signBox">
+        <h2>Sign</h2>
+        <div class="input-box">
+          <label>邮箱</label>
+          <input class="Signmail" type="text" v-model="email" />
+        </div>
+        <div class="input-box">
+          <label>密码</label>
+          <input type="password" v-model="Signpwd" @keyup.enter="signAcc()" />
+        </div>
+        <div class="btn-box">
+          <div>
+            <button v-text="`注册`" @click="signAcc"></button>
+            <button v-text="`已有账号直接登陆`" @click="handleSignOrLogin(1)"></button>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="Signbox" ref="signBox">
-      <h2>Sign</h2>
-      <div class="input-box">
-        <label>邮箱</label>
-        <input class="Signmail" type="text" v-model="email" />
-      </div>
-      <div class="input-box">
-        <label>密码</label>
-        <input type="password" v-model="Signpwd" @keyup.enter="signAcc()" />
-      </div>
-      <div class="btn-box">
-        <div>
-          <button v-text="`注册`" @click="signAcc"></button>
-          <button v-text="`已有账号直接登陆`" @click="handleSignOrLogin(1)"></button>
-        </div>
-      </div>
-    </div>
-    </div>
-   
   </div>
 </template>
 
@@ -72,32 +72,32 @@ const signBox = ref<HTMLElement>()
 /* 登陆逻辑 */
 const handleLogin = async () => {
 
-
+  /* 边界判断 */
   if (userID.value !== '' && pwd.value !== '') {
     show.value = !show.value
-    const res = await userLogin(userID.value, <string>RSAEncrypt(pwd.value))
-    if (!!res.data) {
-      LocalCache.setCache('token', res.data)
-      ElMessage({
-        type: 'success',
-        message: '登陆成功'
-      })
-      router.push('/main')
-    } else {
+    try {
+      const res = await userLogin(userID.value, <string>RSAEncrypt(pwd.value))
+      if (!!res.data) {
+        LocalCache.setCache('token', res.data)
+        ElMessage({
+          type: 'success',
+          message: '登陆成功'
+        })
+        router.push('/main')
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '用户名或密码不正确'
+        })
+      }
+    } catch (error) {
       ElMessage({
         type: 'error',
-        message: '用户名或密码不正确'
+        message: "网络错误,请稍后再试"
       })
     }
     show.value = !show.value
-  } else {
-    ElMessage({
-      type: 'warning',
-      message: "用户名或密码不能为空"
-    })
   }
-
-
 }
 
 /* 
@@ -153,11 +153,13 @@ const handleSignOrLogin = (flag: number) => {
   justify-content: center;
   transform: translate3d(0, 0, 0);
 }
-.PanelBox{
+
+.PanelBox {
   width: 350px;
   height: 350px;
   backdrop-filter: blur(2px);
 }
+
 .box {
   position: absolute;
   backface-visibility: hidden;
@@ -175,7 +177,7 @@ const handleSignOrLogin = (flag: number) => {
   border-left: 1px solid rgba(255, 255, 255, 0.5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   border-right: 1px solid rgba(255, 255, 255, 0.3);
-  
+
 }
 
 .box>h2 {
